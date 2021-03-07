@@ -6,20 +6,24 @@ cd $current_dir/..
 case $1 in
     start)
     for i in ${@:2}; do
-        ./$i/run.sh >/dev/null 2>&1 &
+        ./$i/run.sh >/dev/null &
         echo "$i started"
     done
     ;;
     stop)
     for i in ${@:2}; do
-        docker container stop $i >/dev/null
-        docker container rm $i >/dev/null
+        docker stop $i >/dev/null
+        docker rm $i >/dev/null
         echo "$i stopped."
     done
     ;;
+    stop-all)
+    docker stop $(./bin/pictl list-running) >/dev/null
+    docker rm $(docker ps -a -q) >/dev/null
+    ;;
     startover)
-    docker container stop $(pictl list-running) >/dev/null
-    docker container rm $(docker ps -a -q) >/dev/null
+    docker stop $(./bin/pictl list-running) >/dev/null
+    docker rm $(docker ps -a -q) >/dev/null
     docker system prune -a
     docker network create --subnet 10.0.0.0/28 pi
     docker build -t l-nginx:latest nginx
@@ -30,7 +34,6 @@ case $1 in
     ;;
     rebuild)
     for i in ${@:2}; do
-        pictl stop $i >/dev/null 2>&1
         docker build -t l-$i:latest $i
         echo "$i rebuilt"
     done
