@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+current_dir="$(dirname $0)"
+cd $current_dir/..
+
+case $1 in
+    start)
+    for i in ${@:2}; do
+        ./$i/run.sh >/dev/null 2>&1 &
+        echo "$i started"
+    done
+    ;;
+    stop)
+    for i in ${@:2}; do
+        docker container stop $i >/dev/null
+        docker container rm $i >/dev/null
+        echo "$i stopped."
+    done
+    ;;
+    startover)
+    docker container stop $(pictl list-running) >/dev/null
+    docker container rm $(docker ps -a -q) >/dev/null
+    docker system prune -a
+    docker network create --subnet 10.0.0.0/28 pi
+    docker build -t l-nginx:latest nginx
+    docker build -t l-php-fpm:latest php-fpm
+    docker build -t l-mariadb:latest mariadb
+    docker build -t l-postgresql:latest postgresql
+    docker build -t l-gitea:latest gitea
+    ;;
+    rebuild)
+    for i in ${@:2}; do
+        pictl stop $i >/dev/null 2>&1
+        docker build -t l-$i:latest $i
+        echo "$i rebuilt"
+    done
+    ;;
+    list)
+    docker ps -a --format "{{.Names}}"
+    ;;
+    list-running)
+    docker ps --format "{{.Names}}"
+    ;;
+esac
