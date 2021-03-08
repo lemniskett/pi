@@ -4,44 +4,19 @@ current_dir="$(dirname $0)"
 cd $current_dir/..
 
 case $1 in
-    start)
-    for i in ${@:2}; do
-        ./$i/run.sh >/dev/null &
-        echo "$i started"
-    done
+    run)
+    ./run.sh >run.log 2>&1 &
+    echo "Pi container started"
     ;;
     stop)
-    for i in ${@:2}; do
-        docker stop $i >/dev/null
-        docker rm $i >/dev/null
-        echo "$i stopped."
-    done
+    docker stop pi
+    echo "Pi container stopped"
     ;;
-    stop-all)
-    docker stop $(./bin/pictl list-running) >/dev/null
-    docker rm $(docker ps -a -q) >/dev/null
+    rm)
+    docker rm pi
+    echo "Pi container removed"
     ;;
-    startover)
-    docker stop $(./bin/pictl list-running) >/dev/null
-    docker rm $(docker ps -a -q) >/dev/null
-    docker system prune -a
-    docker network create --subnet 10.0.0.0/28 pi
-    docker build -t l-nginx:latest nginx
-    docker build -t l-php-fpm:latest php-fpm
-    docker build -t l-mariadb:latest mariadb
-    docker build -t l-postgresql:latest postgresql
-    docker build -t l-gitea:latest gitea
-    ;;
-    rebuild)
-    for i in ${@:2}; do
-        docker build -t l-$i:latest $i
-        echo "$i rebuilt"
-    done
-    ;;
-    list)
-    docker ps -a --format "{{.Names}}"
-    ;;
-    list-running)
-    docker ps --format "{{.Names}}"
+    build)
+    docker build -t pi .
     ;;
 esac
