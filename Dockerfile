@@ -15,9 +15,7 @@ RUN apk add --no-cache \
     php8-mbstring \
     postgresql \
     mariadb \
-    gitea \
-    openssh \
-    openssh-server-pam 
+    gitea
 RUN addgroup -g 5000 -S nginx_pi && \
     addgroup -g 5001 -S php-fpm_pi && \
     addgroup -g 5002 -S mariadb_pi && \
@@ -29,10 +27,11 @@ RUN addgroup -g 5000 -S nginx_pi && \
     adduser -u 5003 -s /sbin/nologin -S -D -H -G postgresql_pi postgresql_pi && \
     adduser -u 5004 -s /bin/ash -S -D -H -G gitea_pi -h /data/gitea gitea_pi && \
     addgroup nginx_pi php-fpm_pi
-RUN ssh-keygen -A && \
-    echo 'UsePAM yes' >> /etc/ssh/sshd_config && \
-    echo 'ChallengeResponseAuthentication no' >> /etc/ssh/sshd_config && \
-    echo 'Port 8022' >> /etc/ssh/sshd_config
-EXPOSE 8080 8022
-COPY init.sh /init.sh
-CMD /init.sh
+COPY --chown=nginx_pi ["conf/nginx/nginx.conf", "/etc/nginx/nginx.conf"]
+COPY --chown=php-fpm_pi ["conf/php-fpm/php.ini", "/etc/php8/php.ini"]
+COPY --chown=php-fpm_pi ["conf/php-fpm/php-fpm.d", "/etc/php8/php-fpm.d"]
+COPY --chown=postgresql_pi ["conf/postgresql/pg*", "/etc/"]
+COPY --chown=gitea_pi ["conf/gitea/app.ini", "/etc/gitea/app.ini"]
+COPY ["scripts/*", "/"]
+EXPOSE 8080
+CMD ["/init.sh"]

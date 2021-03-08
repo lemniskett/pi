@@ -2,6 +2,13 @@
 
 current_dir="$(dirname $0)"
 cd $current_dir/..
+all_services=( 
+    nginx:nginx
+    php-fpm:php-fpm8
+    mariadb:mysqld
+    postgresql:postgres
+    gitea:gitea
+)
 
 case $1 in
     run)
@@ -22,4 +29,36 @@ case $1 in
     rebuild)
     ./bin/pictl stop
     ./bin/pictl rm && ./bin/pictl build
+    ;;
+    enter)
+    docker exec -it pi ash
+    ;;
+    service)
+    case $2 in
+        start)
+        for i in ${@:3}; do
+            echo true > /run/pi/$i.fifo
+        done
+        ;;
+        stop)
+        for i in ${@:3}; do
+            for j in ${all_services[@]}; do
+                if [[ $j = $i:* ]]; then
+                    target=$(echo $j | sed 's/.*://')
+                    docker exec -it pi ash -c "killall $target"
+                fi
+            done
+        done
+        ;;
+        restart)
+        ./bin/pictl service stop ${@:3}
+        ./bin/pictl service start ${@:3}
+        ;;
+        list)
+        for j in ${all_services[@]}; do
+            echo $(echo $j | sed 's/:.*//')
+        done
+        ;;
+    esac
+    ;;
 esac
