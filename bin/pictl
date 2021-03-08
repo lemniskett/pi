@@ -9,14 +9,17 @@ case $1 in
     echo "Pi container started"
     ;;
     stop)
-    docker stop pi
+    docker stop pi >/dev/null
     echo "Pi container stopped"
     ;;
     rm)
-    docker rm pi
+    docker rm pi >/dev/null
     echo "Pi container removed"
     ;;
     build)
     docker build -t pi .
     ;;
+    rebuild)
+    ./bin/pictl stop
+    ./bin/pictl rm && ./bin/pictl build
 esac
