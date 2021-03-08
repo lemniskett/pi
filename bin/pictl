@@ -11,17 +11,21 @@ all_services=(
 )
 
 case $1 in
-    run)
+    init)
     ./run.sh >run.log 2>&1 &
-    echo "Pi container started"
+    ;;
+    start)
+    docker start pi >run.log 2>&1 &
     ;;
     stop)
     docker stop pi >/dev/null
-    echo "Pi container stopped"
+    ;;
+    restart)
+    ./bin/pictl stop
+    ./bin/pictl start
     ;;
     rm)
     docker rm pi >/dev/null
-    echo "Pi container removed"
     ;;
     build)
     docker build -t pi .

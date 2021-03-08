@@ -1,6 +1,6 @@
 #!/bin/ash
 
-source /init.conf
+source /data/pi/init.conf
 
 run_nginx(){
     while true; do
@@ -77,8 +77,8 @@ mkfifo \
     /run/pi/mariadb.fifo \
     /run/pi/postgresql.fifo \
     /run/pi/gitea.fifo 
-chown root:1000 /run/pi/*
-chmod 660 /run/pi/*
+chown root:$USERID /run/pi/* /data/pi/init.conf
+chmod 660 /run/pi/* /data/pi/init.conf
 run_nginx > /data/log/init/nginx.log 2>&1 &
 run_php_fpm > /data/log/init/php-fpm.log 2>&1 &
 run_mariadb > /data/log/init/mariadb.log 2>&1 &
