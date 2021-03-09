@@ -4,7 +4,7 @@ current_dir="$(dirname $0)"
 cd $current_dir/..
 all_services=( 
     nginx:nginx
-    php-fpm:php-fpm8
+    php_fpm:php-fpm8
     mariadb:mysqld
     postgresql:postgres
     gitea:gitea
@@ -18,7 +18,7 @@ case $1 in
     docker rm pi >/dev/null
     ;;
     start)
-    docker start pi >run.log 2>&1 &
+    docker start --attach pi >run.log 2>&1 &
     ;;
     stop)
     docker stop pi >/dev/null

@@ -16,4 +16,5 @@ exec docker run \
     -p 8080:8080 \
     -p 8022:8022 \
     --name pi \
+    --memory ${MEMORY}m \
     pi &

@@ -19,14 +19,14 @@ run_nginx(){
 
 run_php_fpm(){
     while true; do
-        while $(cat /run/pi/php-fpm.fifo); do
+        while $(cat /run/pi/php_fpm.fifo); do
             mkdir -p /var/log/php8 /run/php-fpm
-            chown -R php-fpm_pi:php-fpm_pi \
+            chown -R php_fpm_pi:php_fpm_pi \
                 /var/log/php8 \
                 /etc/php8/php.ini \
                 /etc/php8/php-fpm.d \
                 /run/php-fpm
-            runuser -u php-fpm_pi -- php-fpm8 --nodaemonize
+            runuser -u php_fpm_pi -- php-fpm8 --nodaemonize
         done
     done
 }
@@ -73,20 +73,20 @@ run_gitea(){
 mkdir -p /data/log/init /run/pi
 mkfifo \
     /run/pi/nginx.fifo \
-    /run/pi/php-fpm.fifo \
+    /run/pi/php_fpm.fifo \
     /run/pi/mariadb.fifo \
     /run/pi/postgresql.fifo \
     /run/pi/gitea.fifo 
 chown root:$USERID /run/pi/* /data/pi/init.conf
 chmod 660 /run/pi/* /data/pi/init.conf
 run_nginx > /data/log/init/nginx.log 2>&1 &
-run_php_fpm > /data/log/init/php-fpm.log 2>&1 &
+run_php_fpm > /data/log/init/php_fpm.log 2>&1 &
 run_mariadb > /data/log/init/mariadb.log 2>&1 &
 run_postgresql > /data/log/init/postgresql.log 2>&1 &
 run_gitea > /data/log/init/gitea.log 2>&1 &
-echo $nginx > /run/pi/nginx.fifo
-echo $php_fpm > /run/pi/php-fpm.fifo
-echo $mariadb > /run/pi/mariadb.fifo
-echo $postgresql > /run/pi/postgresql.fifo
-echo $gitea > /run/pi/gitea.fifo
+echo $nginx_enabled > /run/pi/nginx.fifo
+echo $php_fpm_enabled > /run/pi/php_fpm.fifo
+echo $mariadb_enabled > /run/pi/mariadb.fifo
+echo $postgresql_enabled > /run/pi/postgresql.fifo
+echo $gitea_enabled > /run/pi/gitea.fifo
 tail -f /data/log/init/*.log
