@@ -15,7 +15,7 @@ pictl init
 ## Run on boot
 
 ```
-pictl resume                        # Put this inside rc scripts or similar
+pictl start                         # Put this inside rc scripts or similar
 ```
 
 ## Directories
