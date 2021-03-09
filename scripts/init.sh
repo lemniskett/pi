@@ -4,7 +4,7 @@ source /data/pi/init.conf
 
 run_nginx(){
     while true; do
-        while `cat /run/pi/nginx.fifo`; do
+        while $(cat /run/pi/nginx.fifo); do
             mkdir -p /run/nginx
             chown -R nginx_pi:nginx_pi \
                 /etc/nginx/nginx.conf \
@@ -19,7 +19,7 @@ run_nginx(){
 
 run_php_fpm(){
     while true; do
-        while `cat /run/pi/php-fpm.fifo`; do
+        while $(cat /run/pi/php-fpm.fifo); do
             mkdir -p /var/log/php8 /run/php-fpm
             chown -R php-fpm_pi:php-fpm_pi \
                 /var/log/php8 \
@@ -33,7 +33,7 @@ run_php_fpm(){
 
 run_mariadb(){
     while true; do
-        while `cat /run/pi/mariadb.fifo`; do
+        while $(cat /run/pi/mariadb.fifo); do
             mkdir -p /run/mysqld
             chown -R mariadb_pi:mariadb_pi \
                 /run/mysqld
@@ -45,7 +45,7 @@ run_mariadb(){
 
 run_postgresql(){
     while true; do
-        while `cat /run/pi/postgresql.fifo`; do
+        while $(cat /run/pi/postgresql.fifo); do
             mkdir -p /run/postgresql
             chown -R postgresql_pi:postgresql_pi \
                 /run/postgresql
@@ -58,7 +58,7 @@ run_postgresql(){
 
 run_gitea(){
     while true; do
-        while `cat /run/pi/gitea.fifo`; do
+        while $(cat /run/pi/gitea.fifo); do
             mkdir -p /run/gitea
             chown -R gitea_pi:gitea_pi \
                 /run/gitea

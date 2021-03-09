@@ -35,5 +35,6 @@ COPY --chown=php-fpm_pi ["conf/php-fpm/php-fpm.d", "/etc/php8/php-fpm.d"]
 COPY --chown=postgresql_pi ["conf/postgresql/pg*", "/etc/"]
 COPY --chown=gitea_pi ["conf/gitea/app.ini", "/etc/gitea/app.ini"]
 COPY ["scripts/init.sh", "/init"]
+COPY ["scripts/check.sh", "/bin/check"]
 EXPOSE 8080
 CMD ["/init"]

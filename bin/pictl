@@ -12,7 +12,10 @@ all_services=(
 
 case $1 in
     init)
-    ./run.sh >run.log 2>&1 &
+    ./scripts/run.sh >run.log 2>&1
+    ;;
+    rm)
+    docker rm pi >/dev/null
     ;;
     start)
     docker start pi >run.log 2>&1 &
@@ -24,24 +27,29 @@ case $1 in
     ./bin/pictl stop
     ./bin/pictl start
     ;;
-    rm)
-    docker rm pi >/dev/null
-    ;;
-    build)
-    docker build -t pi .
-    ;;
     rebuild)
     ./bin/pictl stop
-    ./bin/pictl rm && ./bin/pictl build
+    ./bin/pictl rm
+    docker build -t pi .
     ;;
     enter)
     docker exec -it pi ash
+    ;;
+    status)
+    docker exec pi check
+    cat /data/pi/pi.log
     ;;
     service)
     case $2 in
         start)
         for i in ${@:3}; do
-            echo true > /run/pi/$i.fifo
+            docker exec pi check
+            if grep "$i" /data/pi/pi.log | grep "running" >/dev/null; then
+                echo "$i is already running."
+            else
+                ls /run/pi/$i.fifo >/dev/null 2>&1 && \
+                    echo true > /run/pi/$i.fifo
+            fi
         done
         ;;
         stop)
@@ -49,7 +57,8 @@ case $1 in
             for j in ${all_services[@]}; do
                 if [[ $j = $i:* ]]; then
                     target=$(echo $j | sed 's/.*://')
-                    docker exec -it pi ash -c "killall $target"
+                    ls /run/pi/$i.fifo >/dev/null 2>&1 && \
+                        docker exec pi ash -c "killall $target"
                 fi
             done
         done
@@ -57,6 +66,16 @@ case $1 in
         restart)
         ./bin/pictl service stop ${@:3}
         ./bin/pictl service start ${@:3}
+        ;;
+        enable)
+        for i in ${@:3}; do
+            sed -i "/\b$i=\b/ s/\bfalse\b/true/g" /data/pi/init.conf
+        done
+        ;;
+        disable)
+        for i in ${@:3}; do
+            sed -i "/\b$i=\b/ s/\btrue\b/false/g" /data/pi/init.conf
+        done
         ;;
         list)
         for j in ${all_services[@]}; do
