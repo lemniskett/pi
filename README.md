@@ -22,11 +22,15 @@ pictl resume                        # Put this inside rc scripts or similar
 
 All persistent files are stored in ```/data```
 
-```/data/webroot:/data/webroot``` for web root,
-```/data/postgres:/data/postgres``` for PostgreSQL,
-```/data/mysql:/data/mysql``` for MariaDB,
-```/data/gitea:/data/gitea``` for Gitea,
-```/data/pi:/data/pi``` for config files related to the container itself.
+```/data/webroot``` for web root,
+
+```/data/postgres``` for PostgreSQL,
+
+```/data/mysql``` for MariaDB,
+
+```/data/gitea``` for Gitea,
+
+```/data/pi``` for config files related to the container itself.
 
 ## Services
 
