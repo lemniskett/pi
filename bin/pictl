@@ -19,7 +19,7 @@ case $1 in
     ;;
     start)
     source /data/pi/init.conf
-    docker update --memory ${MEMORY}m pi >/dev/null
+    docker update --memory ${MEMORY}m --memory-swap $((MEMORY * 2))m pi >/dev/null
     docker start --attach pi >run.log 2>&1 &
     ;;
     stop)
