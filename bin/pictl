@@ -16,6 +16,7 @@ case $1 in
     ;;
     rm)
     docker rm pi >/dev/null
+    sudo rm -r /data/pi
     ;;
     start)
     source /data/pi/init.conf
