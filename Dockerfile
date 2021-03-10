@@ -18,16 +18,16 @@ RUN apk add --no-cache \
 RUN apk add --no-cache postgresql
 RUN apk add --no-cache mariadb 
 RUN apk add --no-cache gitea 
-RUN addgroup -g 5000 -S nginx_pi && \
-    addgroup -g 5001 -S php_fpm_pi && \
-    addgroup -g 5002 -S mariadb_pi && \
-    addgroup -g 5003 -S postgresql_pi && \
-    addgroup -g 5004 -S gitea_pi && \
-    adduser -u 5000 -s /sbin/nologin -S -D -H -G nginx_pi nginx_pi && \
-    adduser -u 5001 -s /sbin/nologin -S -D -H -G php_fpm_pi php_fpm_pi && \
-    adduser -u 5002 -s /sbin/nologin -S -D -H -G mariadb_pi mariadb_pi && \
-    adduser -u 5003 -s /sbin/nologin -S -D -H -G postgresql_pi postgresql_pi && \
-    adduser -u 5004 -s /bin/ash -S -D -H -G gitea_pi -h /data/gitea gitea_pi && \
+RUN addgroup -g 201 -S nginx_pi && \
+    addgroup -g 202 -S php_fpm_pi && \
+    addgroup -g 203 -S mariadb_pi && \
+    addgroup -g 204 -S postgresql_pi && \
+    addgroup -g 205 -S gitea_pi && \
+    adduser -u 201 -s /sbin/nologin -S -D -H -G nginx_pi nginx_pi && \
+    adduser -u 202 -s /sbin/nologin -S -D -H -G php_fpm_pi php_fpm_pi && \
+    adduser -u 203 -s /sbin/nologin -S -D -H -G mariadb_pi mariadb_pi && \
+    adduser -u 204 -s /sbin/nologin -S -D -H -G postgresql_pi postgresql_pi && \
+    adduser -u 205 -s /bin/ash -S -D -H -G gitea_pi -h /data/gitea gitea_pi && \
     addgroup nginx_pi php_fpm_pi
 COPY --chown=nginx_pi ["conf/nginx/nginx.conf", "/etc/nginx/nginx.conf"]
 COPY --chown=php_fpm_pi ["conf/php-fpm/php.ini", "/etc/php8/php.ini"]

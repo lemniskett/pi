@@ -25,7 +25,9 @@ run_php_fpm(){
                 /var/log/php8 \
                 /etc/php8/php.ini \
                 /etc/php8/php-fpm.d \
-                /run/php-fpm
+                /run/php-fpm \
+                /data/webroot
+            chmod 775 -R /data/webroot
             runuser -u php_fpm_pi -- php-fpm8 --nodaemonize
         done
     done
@@ -36,9 +38,11 @@ run_mariadb(){
         while $(cat /run/pi/mariadb.fifo); do
             mkdir -p /run/mysqld
             chown -R mariadb_pi:mariadb_pi \
-                /run/mysqld
+                /run/mysqld \
+                /data/mysql
+            chmod 700 -R /data/mysql
             runuser -u mariadb_pi -- mysqld \
-            -h /data/mysql 
+                -h /data/mysql 
         done
     done
 }
@@ -48,7 +52,9 @@ run_postgresql(){
         while $(cat /run/pi/postgresql.fifo); do
             mkdir -p /run/postgresql
             chown -R postgresql_pi:postgresql_pi \
-                /run/postgresql
+                /run/postgresql \
+                /data/postgres
+            chmod 700 -R /data/postgres
             runuser -u postgresql_pi -- postgres \
                 -i \
                 --config-file=/etc/pg.conf
@@ -61,7 +67,9 @@ run_gitea(){
         while $(cat /run/pi/gitea.fifo); do
             mkdir -p /run/gitea
             chown -R gitea_pi:gitea_pi \
-                /run/gitea
+                /run/gitea \
+                /data/gitea
+            chmod 700 -R /data/gitea
             runuser -u gitea_pi -- gitea web \
                 --config /etc/gitea/app.ini \
                 --work-path /data/gitea \
@@ -77,8 +85,8 @@ mkfifo \
     /run/pi/mariadb.fifo \
     /run/pi/postgresql.fifo \
     /run/pi/gitea.fifo 
-chown root:$USERID /run/pi/* /data/pi/init.conf
-chmod 660 /run/pi/* /data/pi/init.conf
+chown root:$USERID /data/pi/init.conf
+chmod 660 /data/pi/init.conf
 run_nginx > /data/log/init/nginx.log 2>&1 &
 run_php_fpm > /data/log/init/php_fpm.log 2>&1 &
 run_mariadb > /data/log/init/mariadb.log 2>&1 &
