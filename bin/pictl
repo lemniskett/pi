@@ -32,7 +32,9 @@ case $1 in
     ;;
     rebuild)
     ./bin/pictl stop
-    ./bin/pictl rm
+    ./bin/pictl rm && ./bin/pictl build
+    ;;
+    build)
     docker build -t pi .
     ;;
     enter)
@@ -48,7 +50,8 @@ case $1 in
     allocate)
     memory_line=$(sed -n '/MEMORY/=' /data/pi/init.conf)
     sed -i "${memory_line}s/.*/MEMORY=$2 /" /data/pi/init.conf
-    ./bin/pictl restart
+    source /data/pi/init.conf
+    docker update --memory ${MEMORY}m --memory-swap $((MEMORY * 2))m pi >/dev/null
     ;;
     service)
     case $2 in
@@ -79,12 +82,12 @@ case $1 in
         ;;
         enable)
         for i in ${@:3}; do
-            sed -i "/$i/ s/false/true/g" /data/pi/init.conf
+            sed -i "/${i^^}/ s/false/true/g" /data/pi/init.conf
         done
         ;;
         disable)
         for i in ${@:3}; do
-            sed -i "/$i/ s/true/false/g" /data/pi/init.conf
+            sed -i "/${i^^}/ s/true/false/g" /data/pi/init.conf
         done
         ;;
         list)

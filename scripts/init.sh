@@ -92,9 +92,9 @@ run_php_fpm > /data/log/init/php_fpm.log 2>&1 &
 run_mariadb > /data/log/init/mariadb.log 2>&1 &
 run_postgresql > /data/log/init/postgresql.log 2>&1 &
 run_gitea > /data/log/init/gitea.log 2>&1 &
-echo $nginx_enabled > /run/pi/nginx.fifo
-echo $php_fpm_enabled > /run/pi/php_fpm.fifo
-echo $mariadb_enabled > /run/pi/mariadb.fifo
-echo $postgresql_enabled > /run/pi/postgresql.fifo
-echo $gitea_enabled > /run/pi/gitea.fifo
+echo $NGINX_ENABLED > /run/pi/nginx.fifo
+echo $PHP_FPM_ENABLED > /run/pi/php_fpm.fifo
+echo $MARIADB_ENABLED > /run/pi/mariadb.fifo
+echo $POSTGRESQL_ENABLED > /run/pi/postgresql.fifo
+echo $GITEA_ENABLED > /run/pi/gitea.fifo
 tail -f /data/log/init/*.log
