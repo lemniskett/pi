@@ -1,100 +1,53 @@
 #!/usr/bin/env bash
 
+asroot(){
+    [[ $EUID -ne 0 ]] && echo "Run this as root!" && exit 130
+}
+
+
+
 current_dir="$(dirname $0)"
 cd $current_dir/..
-all_services=( 
-    nginx:nginx
-    php_fpm:php-fpm8
-    mariadb:mysqld
-    postgresql:postgres
-    gitea:gitea
-)
 
 case $1 in
     init)
-    ./scripts/run.sh >run.log 2>&1
-    ;;
-    rm)
-    docker rm pi >/dev/null
-    sudo rm -r /data/pi
+    mkdir -p out
+    for i in ${@:2}; do
+        ./$i/run.sh > out/$i.out 2>&1 &
+    done
     ;;
     start)
-    source /data/pi/init.conf
-    docker update --memory ${MEMORY}m --memory-swap $((MEMORY * 2))m pi >/dev/null
-    docker start --attach pi >run.log 2>&1 &
+    for i in ${@:2}; do
+        docker container start --attach $i-pi >>out/$i.out 2>&1 &
+    done
     ;;
     stop)
-    docker stop pi >/dev/null
-    ;;
-    restart)
-    ./bin/pictl stop
-    ./bin/pictl start
-    ;;
-    rebuild)
-    ./bin/pictl stop
-    ./bin/pictl rm && ./bin/pictl build
+    for i in ${@:2}; do
+        docker container stop $i-pi
+    done
     ;;
     build)
-    docker build -t pi .
-    ;;
-    enter)
-    docker exec -it pi ash
-    ;;
-    status)
-    docker exec pi check && \
-        cat /data/pi/pi.log
+    asroot
+    ./build.sh
     ;;
     tail)
-    docker exec pi ash -c "tail -f /data/log/init/*.log"
+    tail -f out/$2.out
     ;;
-    allocate)
-    memory_line=$(sed -n '/MEMORY/=' /data/pi/init.conf)
-    sed -i "${memory_line}s/.*/MEMORY=$2 /" /data/pi/init.conf
-    source /data/pi/init.conf
-    docker update --memory ${MEMORY}m --memory-swap $((MEMORY * 2))m pi >/dev/null
+    set-memory)
+    mem="$3"
+    docker update --memory ${mem}m --memory-swap $((mem * 2))m $2-pi >/dev/null
     ;;
-    service)
-    case $2 in
-        start)
-        for i in ${@:3}; do
-            docker exec pi check
-            if grep "$i" /data/pi/pi.log | grep "running" >/dev/null; then
-                echo "$i is already running."
-            else
-                docker exec pi ash -c "[[ -e /run/pi/$i.fifo ]]" && \
-                    docker exec pi ash -c "echo true > /run/pi/$i.fifo"
-            fi
-        done
-        ;;
-        stop)
-        for i in ${@:3}; do
-            for j in ${all_services[@]}; do
-                if [[ $j = $i:* ]]; then
-                    target=$(echo $j | sed 's/.*://')
-                    docker exec pi ash -c "killall $target"
-                fi
-            done
-        done
-        ;;
-        restart)
-        ./bin/pictl service stop ${@:3}
-        ./bin/pictl service start ${@:3}
-        ;;
-        enable)
-        for i in ${@:3}; do
-            sed -i "/${i^^}/ s/false/true/g" /data/pi/init.conf
-        done
-        ;;
-        disable)
-        for i in ${@:3}; do
-            sed -i "/${i^^}/ s/true/false/g" /data/pi/init.conf
-        done
-        ;;
-        list)
-        for j in ${all_services[@]}; do
-            echo $(echo $j | sed 's/:.*//')
-        done
-        ;;
-    esac
+    status)
+    docker stats --format '{{.Name}}\t{{.MemUsage}}' --no-stream >/tmp/pictl.tmp
+    for i in nginx php-fpm8 mysql postgresql gitea; do
+        mem="$(grep ${i}-pi /tmp/pictl.tmp | awk '{print $2}')"
+        mem="$(printf '%.0f' ${mem/MiB/})"
+        limit="$(grep ${i}-pi /tmp/pictl.tmp | awk '{print $4}')"
+        limit="$(printf '%.0f' ${limit/MiB/})"
+        name="$(echo $i | sed 's/-/_/g')"
+        echo "${name}_running=$([[ $(cat /tmp/pictl.tmp) = *$i* ]] && echo true || echo false)"
+        echo "${name}_usage=$mem"
+        echo "${name}_limit=$limit"
+    done
     ;;
 esac
