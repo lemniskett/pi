@@ -23,7 +23,7 @@ case $1 in
     ;;
     stop)
     for i in ${@:2}; do
-        docker container stop $i-pi
+        docker container stop $i-pi >/dev/null 
     done
     ;;
     build)

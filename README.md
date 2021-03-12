@@ -8,7 +8,7 @@ All-in-one container for my Pi server.
 git clone https://github.com/lemniskett/pi.git
 cd pi
 export PATH="$PATH:$(pwd)/bin"      # Put this inside .bashrc or your shell equivalent.
-pictl rebuild
+pictl build
 pictl init
 ```
 
@@ -34,17 +34,9 @@ All persistent files are stored in ```/data```
 
 ## Services
 
-### Enabling on container boot
-```
-pictl service enable $service1 $service2 ...
-```
 ### Starting
 ```
-pictl service start $service1 $service2 ...
-```
-### Disabling on container boot
-```
-pictl service disable $service1 $service2 ...
+pictl start $service1 $service2 ...
 ```
 ### Stopping
 ```
