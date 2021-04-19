@@ -1,0 +1,22 @@
+#  SPDX-License-Identifier: LGPL-2.1-or-later
+#
+#  This file is part of systemd.
+#
+#  systemd is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation; either version 2.1 of the License, or
+#  (at your option) any later version.
+
+[Unit]
+Description=Pi compose
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+WorkingDirectory=/var/pi/system
+TasksMax=infinity
+ExecStart=/bin/sh -c "docker-compose pull |& tee /var/pi/pi.log && docker-compose up --build --remove-orphans |& tee -a /var/pi/pi.log"
+ExecStop=/usr/bin/docker-compose down
+
+[Install]
+WantedBy=multi-user.target

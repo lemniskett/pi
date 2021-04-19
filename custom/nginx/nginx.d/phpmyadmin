@@ -1,0 +1,17 @@
+server {
+    listen              8180 ssl;
+    ssl_certificate     /etc/nginx/me.crt;
+    ssl_certificate_key /etc/nginx/me.key;
+    server_name         lemniskett.ddns.net;
+    root                /data/webroot/phpmyadmin;
+    index               index.php index.html;
+
+    location ~ \.php$ {
+        fastcgi_pass   192.168.255.3:9000;
+        fastcgi_intercept_errors        on;
+        include        fastcgi_params;
+        fastcgi_param  SCRIPT_FILENAME $request_filename;
+    }
+
+    access_log          /tmp/nginx-8480-access.log;
+}

@@ -1,0 +1,12 @@
+[Unit]
+Description=Telegram bot
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/var/pi/bot/tgbot.py
+User=lemniskett
+Group=lemniskett
+
+[Install]
+WantedBy=multi-user.target
