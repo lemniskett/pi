@@ -5,6 +5,8 @@ services:
         image: "192.168.254.3:5000/nginx:latest"
         volumes:
             - /data/webroot:/data/webroot
+            - /var/pi/custom/nginx/nginx.conf:/etc/nginx/nginx.conf
+            - /var/pi/custom/nginx/nginx.d:/etc/nginx/nginx.d
         networks:
             sub1:
                 ipv4_address: 192.168.255.2
