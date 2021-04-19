@@ -16,8 +16,10 @@ sudo systemctl enable --now pi telegram-bot
 ```
 
 ## Daemon :
+```json
 {
     "storage-driver": "btrfs",
     "data-root": "/containers",
     "insecure-registries": ["192.168.254.3:5000"]
 }
+```
