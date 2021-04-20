@@ -16,6 +16,8 @@ services:
 
     php-fpm:
         image: "192.168.254.3:5000/php-fpm:latest"
+        depends_on:
+            - "nginx"
         volumes:
             - /data/webroot:/data/webroot
         networks:
@@ -53,6 +55,8 @@ services:
         networks:
             sub1:
                 ipv4_address: 192.168.255.6
+        depends_on:
+            - "nginx"
         volumes:
             - /data/gitea:/data
             - /data/gitea/keys:/data/git/.ssh
