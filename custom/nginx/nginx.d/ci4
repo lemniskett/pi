@@ -1,8 +1,8 @@
 server {
-    listen              8480 ssl;
+    listen              443 ssl;
     ssl_certificate     /etc/nginx/me.crt;
     ssl_certificate_key /etc/nginx/me.key;
-    server_name         lemniskett.ddns.net;
+    server_name         ci4.mokoupi.local;
     root                /data/webroot/ci4/public;
     index               index.php index.html index.htm;
 

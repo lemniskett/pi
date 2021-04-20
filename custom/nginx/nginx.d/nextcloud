@@ -1,6 +1,6 @@
 server {
-    listen                  8380 ssl;
-    server_name             lemniskett.ddns.net;
+    listen                  443 ssl;
+    server_name             nextcloud.mokoupi.local;
     ssl_certificate         /etc/nginx/me.crt;
     ssl_certificate_key     /etc/nginx/me.key;
     client_max_body_size    256M;

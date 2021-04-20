@@ -10,7 +10,7 @@ services:
             sub0:
                 ipv4_address: 192.168.254.2
         ports:
-            - "80:9000/tcp"
+            - "9000:9000/tcp"
 
     registry:
         image: "docker.io/library/registry:latest"
