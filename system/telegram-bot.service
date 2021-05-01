@@ -5,8 +5,8 @@ After=network-online.target
 
 [Service]
 ExecStart=/var/pi/bot/tgbot.py
-User=lemniskett
-Group=lemniskett
+User=lemni
+Group=lemni
 
 [Install]
 WantedBy=multi-user.target
