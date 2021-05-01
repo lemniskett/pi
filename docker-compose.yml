@@ -2,18 +2,20 @@ version: "2"
 
 services:
     containerman:
-        image: "docker.io/portainer/portainer-ce:alpine"
+        image: docker.io/selfhostedpro/yacht:devel
         volumes:
-            - /data/portainer:/data
+            - /data/yacht:/config
             - /var/run/docker.sock:/var/run/docker.sock
         networks:
             sub0:
                 ipv4_address: 192.168.255.2
         ports:
-            - "9000:9000/tcp"
+            - 8000:8000/tcp
+        environment:
+            - ADMIN_EMAIL=lemniskett@mokoupi.local
 
 networks: 
     sub0:
         ipam:
             config:
-              - subnet: 192.168.254.0/24
+              - subnet: 192.168.255.0/24

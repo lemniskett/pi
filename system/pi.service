@@ -13,9 +13,9 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-WorkingDirectory=/var/pi/system
+WorkingDirectory=/var/pi
 TasksMax=infinity
-ExecStart=/bin/sh -c "docker-compose pull |& tee /var/pi/pi.log && docker-compose up --build --remove-orphans |& tee -a /var/pi/pi.log"
+ExecStart=/bin/bash -c "docker-compose pull |& tee /var/pi/pi.log && docker-compose up --build --remove-orphans |& tee -a /var/pi/pi.log"
 ExecStop=/usr/bin/docker-compose down
 
 [Install]
