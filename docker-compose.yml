@@ -2,6 +2,7 @@ version: "2"
 
 services:
     containerman:
+        container_name: containerman
         image: docker.io/selfhostedpro/yacht:latest
         volumes:
             - /data/yacht:/config
@@ -10,10 +11,26 @@ services:
             sub0:
                 ipv4_address: 192.168.255.2
         ports:
-            - 8000:8000/tcp
+            - 0.0.0.0:8000:8000/tcp
         environment:
             - ADMIN_EMAIL=lemniskett@mokoupi.local
             - SECRET_KEY=5wdOCblepO
+
+    pihole:
+        container_name: pihole
+        image: docker.io/pihole/pihole:latest
+        volumes:
+            - /data/pihole:/etc/pihole
+            - /data/dnsmasq.d:/etc/dnsmasq.d
+        ports:
+            - 0.0.0.0:53:53/tcp
+            - 0.0.0.0:53:53/udp
+            - 0.0.0.0:67:67/udp
+            - 0.0.0.0:80:80/tcp
+        environment:
+            - TZ=Asia/Jakarta
+            - PIHOLE_DNS_=192.168.0.1
+            - ADMIN_EMAIL=lemniskett@mokoupi.local
 
 networks: 
     sub0:
