@@ -7,11 +7,7 @@ services:
         volumes:
             - /data/yacht:/config
             - /var/run/docker.sock:/var/run/docker.sock
-        networks:
-            sub0:
-                ipv4_address: 192.168.255.2
-        ports:
-            - 0.0.0.0:8000:8000/tcp
+        network_mode: host
         environment:
             - ADMIN_EMAIL=lemniskett@mokoupi.local
             - SECRET_KEY=5wdOCblepO
@@ -22,20 +18,8 @@ services:
         volumes:
             - /data/pihole:/etc/pihole
             - /data/dnsmasq.d:/etc/dnsmasq.d
-        networks:
-            sub0:
-                ipv4_address: 192.168.255.3
-        ports:
-            - 0.0.0.0:53:53
-            - 0.0.0.0:67:67/udp
-            - 0.0.0.0:80:80/tcp
+        network_mode: host
         environment:
             - TZ=Asia/Jakarta
-            - PIHOLE_DNS_=192.168.0.1
-            - ADMIN_EMAIL=lemniskett@mokoupi.local
-
-networks: 
-    sub0:
-        ipam:
-            config:
-              - subnet: 192.168.255.0/24
+        cap_add:
+            - NET_ADMIN
