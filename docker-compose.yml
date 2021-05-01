@@ -2,7 +2,7 @@ version: "2"
 
 services:
     containerman:
-        image: docker.io/selfhostedpro/yacht:devel
+        image: docker.io/selfhostedpro/yacht:latest
         volumes:
             - /data/yacht:/config
             - /var/run/docker.sock:/var/run/docker.sock
