@@ -26,6 +26,7 @@ services:
             sub0:
                 ipv4_address: 192.168.255.3
         ports:
+            - 0.0.0.0:53:53
             - 0.0.0.0:67:67/udp
             - 0.0.0.0:80:80/tcp
         environment:
