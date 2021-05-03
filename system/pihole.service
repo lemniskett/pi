@@ -8,15 +8,16 @@
 #  (at your option) any later version.
 
 [Unit]
-Description=Pi compose
+Description=Pi-hole
 Wants=network-online.target docker.service
 After=network-online.target docker.service
 
 [Service]
-WorkingDirectory=/var/pi
+TimeoutStartSec=infinity
 TasksMax=infinity
-ExecStart=/bin/bash -c "docker-compose pull |& tee /var/pi/pi.log && docker-compose up --build --remove-orphans |& tee -a /var/pi/pi.log"
-ExecStop=/usr/bin/docker-compose down
+ExecStartPre=-/usr/bin/docker container create --name pihole-systemd -p 0.0.0.0:53:53/tcp -p 0.0.0.0:53:53/udp -p 0.0.0.0:67:67/udp -p 0.0.0.0:2002:80/tcp -v /data/pihole:/etc/pihole -v /data/dnsmasq.d:/etc/dnsmasq.d -e TZ=Asia/Jakarta --cap-add NET_ADMIN docker.io/pihole/pihole
+ExecStart=/usr/bin/docker container start pihole-systemd --attach
+ExecStop=/usr/bin/docker container stop pihole-systemd
 
 [Install]
 WantedBy=multi-user.target
