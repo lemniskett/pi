@@ -1,0 +1,22 @@
+#  SPDX-License-Identifier: LGPL-2.1-or-later
+#
+#  This file is part of systemd.
+#
+#  systemd is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation; either version 2.1 of the License, or
+#  (at your option) any later version.
+
+[Unit]
+Description=Pi-hole
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+TimeoutStartSec=infinity
+TasksMax=infinity
+ExecStartPre=-/bin/bash -c "podman pull docker.io/pihole/pihole; podman stop pi-hole-podman; podman rm pi-hole-podman"
+ExecStart=/bin/bash -c "/usr/bin/podman run --name pi-hole-podman -p 0.0.0.0:53:53/tcp -p 0.0.0.0:53:53/udp -p 0.0.0.0:67:67/udp -p 0.0.0.0:2002:80/tcp -v /data/pihole:/etc/pihole -v /data/dnsmasq.d:/etc/dnsmasq.d -e TZ=Asia/Jakarta --cap-add NET_ADMIN docker.io/pihole/pihole |& tee /var/log/pi-hole-podman.log"
+
+[Install]
+WantedBy=multi-user.target

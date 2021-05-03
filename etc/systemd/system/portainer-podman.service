@@ -1,0 +1,22 @@
+#  SPDX-License-Identifier: LGPL-2.1-or-later
+#
+#  This file is part of systemd.
+#
+#  systemd is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation; either version 2.1 of the License, or
+#  (at your option) any later version.
+
+[Unit]
+Description=Pi-hole
+Wants=network-online.target podman.socket
+After=network-online.target podman.socket
+
+[Service]
+TimeoutStartSec=infinity
+TasksMax=infinity
+ExecStartPre=-/bin/bash -c "podman pull docker.io/portainer/portainer-ce; podman stop portainer-podman; podman rm portainer-podman"
+ExecStart=/bin/bash -c "/usr/bin/podman run --name portainer-podman -p 0.0.0.0:2001:9000/tcp -v /var/run/podman/podman.sock:/var/run/docker.sock -v /data/portainer:/data docker.io/portainer/portainer-ce |& tee /var/log/portainer-podman.log"
+
+[Install]
+WantedBy=multi-user.target
