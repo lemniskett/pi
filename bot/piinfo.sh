@@ -26,8 +26,7 @@ public_ip="$(curl ifconfig.co 2>/dev/null | sed 's/\./\\\./g')"
 sshd_connected="$(ps auxwww | grep sshd: | grep @pts | wc -l)"
 sshd_running="$(systemctl is-active sshd >/dev/null 2>&1 && echo active \($sshd_connected connected\) || echo stopped)"
 ddclient_running="$(systemctl is-active ddclient >/dev/null 2>&1 && echo active || echo stopped)"
-docker_deployed="$(docker ps -q | wc -l)"
-docker_running="$(systemctl is-active docker >/dev/null 2>&1 && echo active \($docker_deployed running\) || echo stopped)"
+podman_container_running="$(sudo podman ps -q | wc -l) containers"
 uptime="$(uptime -p)"
 clock="$(date '+%a %b %d %r')"
 ram="$(free --mega | awk 'FNR==2{print $3}')"
@@ -58,5 +57,5 @@ $ram_bar\`
 *Services*
 \`Sshd       : $sshd_running
 Ddclient   : $ddclient_running
-Docker     : $docker_running
+Podman     : $podman_container_running
 \`"
