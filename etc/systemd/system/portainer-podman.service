@@ -8,15 +8,15 @@
 #  (at your option) any later version.
 
 [Unit]
-Description=Pi-hole
+Description=Portainer
 Wants=network-online.target podman.socket
 After=network-online.target podman.socket
 
 [Service]
 TimeoutStartSec=infinity
 TasksMax=infinity
-ExecStartPre=-/bin/bash -c "podman pull docker.io/portainer/portainer-ce; podman stop portainer-podman; podman rm portainer-podman"
-ExecStart=/bin/bash -c "/usr/bin/podman run --name portainer-podman -p 0.0.0.0:2001:9000/tcp -v /var/run/podman/podman.sock:/var/run/docker.sock -v /data/portainer:/data docker.io/portainer/portainer-ce |& tee /var/log/portainer-podman.log"
+ExecStartPre=-/bin/bash -c "podman pull docker.io/portainer/portainer-ce:alpine; podman stop portainer-podman; podman rm portainer-podman"
+ExecStart=/bin/bash -c "/usr/bin/podman run --name portainer-podman -p 0.0.0.0:2001:9000/tcp -v /var/run/podman/podman.sock:/var/run/docker.sock -v /data/portainer:/data docker.io/portainer/portainer-ce:alpine |& tee /var/log/portainer-podman.log"
 
 [Install]
 WantedBy=multi-user.target

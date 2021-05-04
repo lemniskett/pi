@@ -1,0 +1,22 @@
+#  SPDX-License-Identifier: LGPL-2.1-or-later
+#
+#  This file is part of systemd.
+#
+#  systemd is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation; either version 2.1 of the License, or
+#  (at your option) any later version.
+
+[Unit]
+Description=Homer dashboard
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+TimeoutStartSec=infinity
+TasksMax=infinity
+ExecStartPre=-/bin/bash -c "podman pull docker.io/b4bz/homer:latest; podman stop homer-podman; podman rm homer-podman"
+ExecStart=/bin/bash -c "/usr/bin/podman run --name homer-podman -p 0.0.0.0:80:8080/tcp -v /data/homer:/www/assets docker.io/b4bz/homer:latest |& tee /var/log/homer-podman.log"
+
+[Install]
+WantedBy=multi-user.target
