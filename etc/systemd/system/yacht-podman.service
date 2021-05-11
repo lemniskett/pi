@@ -15,9 +15,9 @@ After=network-online.target podman.socket
 [Service]
 TimeoutStartSec=infinity
 TasksMax=infinity
-ExecStartPre=-/bin/bash -c "podman pull docker.io/portainer/portainer-ce:alpine; podman stop portainer-podman; podman rm portainer-podman"
-ExecStart=/bin/bash -c "podman run --name portainer-podman -p 0.0.0.0:2001:9000/tcp -v /var/run/podman/podman.sock:/var/run/docker.sock -v /data/portainer:/data docker.io/portainer/portainer-ce:alpine |& tee /var/log/portainer-podman.log"
-ExecStop=-/bin/bash -c "podman stop portainer-podman; podman rm portainer-podman"
+ExecStartPre=-/bin/bash -c "podman pull docker.io/selfhostedpro/yacht:latest; podman stop yacht-podman; podman rm yacht-podman"
+ExecStart=/bin/bash -c "podman run --name yacht-podman -p 0.0.0.0:2003:8000/tcp -v /var/run/podman/podman.sock:/var/run/docker.sock -v /data/yacht:/config docker.io/selfhostedpro/yacht:latest |& tee /var/log/yacht-podman.log"
+ExecStop=-/bin/bash -c "podman stop yacht-podman; podman rm yacht-podman"
 
 [Install]
 WantedBy=multi-user.target

@@ -16,7 +16,8 @@ After=network-online.target
 TimeoutStartSec=infinity
 TasksMax=infinity
 ExecStartPre=-/bin/bash -c "podman pull docker.io/michaelmiklis/rpi-monitor:latest; podman stop rpi-monitor-podman; podman rm rpi-monitor-podman"
-ExecStart=/bin/bash -c "podman run --name rpi-monitor-podman --device /dev/vchiq -v /opt/vc:/opt/vc -v /boot:/boot -v /sys:/dockerhost/sys:ro -v /etc:/dockerhost/etc:ro -v /proc:/dockerhost/proc:ro -v /usr/lib:/dockerhost/usr/lib:ro -v /data/rpimonitor:/etc/rpimonitor -p 2000:8888 -d docker.io/michaelmiklis/rpi-monitor:latest |& tee /var/log/rpi-monitor-podman.log"
+ExecStart=/bin/bash -c "podman run --name rpi-monitor-podman --device /dev/vchiq -v /opt/vc:/opt/vc -v /boot:/boot -v /sys:/dockerhost/sys:ro -v /etc:/dockerhost/etc:ro -v /proc:/dockerhost/proc:ro -v /usr/lib:/dockerhost/usr/lib:ro -v /data/rpimonitor:/etc/rpimonitor -p 2000:8888 docker.io/michaelmiklis/rpi-monitor:latest |& tee /var/log/rpi-monitor-podman.log"
+ExecStop=-/bin/bash -c "podman stop rpi-monitor-podman; podman rm rpi-monitor-podman"
 
 [Install]
 WantedBy=multi-user.target

@@ -16,7 +16,8 @@ After=network-online.target
 TimeoutStartSec=infinity
 TasksMax=infinity
 ExecStartPre=-/bin/bash -c "podman pull docker.io/pihole/pihole:latest; podman stop pihole-podman; podman rm pihole-podman"
-ExecStart=/bin/bash -c "/usr/bin/podman run --name pihole-podman -p 0.0.0.0:53:53/tcp -p 0.0.0.0:53:53/udp -p 0.0.0.0:67:67/udp -p 0.0.0.0:2002:80/tcp -v /data/pihole:/etc/pihole -v /data/dnsmasq.d:/etc/dnsmasq.d -e TZ=Asia/Jakarta --cap-add NET_ADMIN docker.io/pihole/pihole:latest |& tee /var/log/pihole-podman.log"
+ExecStart=/bin/bash -c "podman run --name pihole-podman -p 0.0.0.0:53:53/tcp -p 0.0.0.0:53:53/udp -p 0.0.0.0:67:67/udp -p 0.0.0.0:2002:80/tcp -v /data/pihole:/etc/pihole -v /data/dnsmasq.d:/etc/dnsmasq.d -e TZ=Asia/Jakarta --cap-add NET_ADMIN docker.io/pihole/pihole:latest |& tee /var/log/pihole-podman.log"
+ExecStop=-/bin/bash -c "podman stop pihole-podman; podman rm pihole-podman"
 
 [Install]
 WantedBy=multi-user.target

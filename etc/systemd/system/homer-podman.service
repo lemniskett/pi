@@ -16,7 +16,8 @@ After=network-online.target
 TimeoutStartSec=infinity
 TasksMax=infinity
 ExecStartPre=-/bin/bash -c "podman pull docker.io/b4bz/homer:latest; podman stop homer-podman; podman rm homer-podman"
-ExecStart=/bin/bash -c "/usr/bin/podman run --name homer-podman -p 0.0.0.0:80:8080/tcp -v /data/homer:/www/assets docker.io/b4bz/homer:latest |& tee /var/log/homer-podman.log"
+ExecStart=/bin/bash -c "podman run --name homer-podman -p 0.0.0.0:80:8080/tcp -v /data/homer:/www/assets docker.io/b4bz/homer:latest |& tee /var/log/homer-podman.log"
+ExecStop=-/bin/bash -c "podman stop homer-podman; podman rm homer-podman"
 
 [Install]
 WantedBy=multi-user.target
