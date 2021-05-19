@@ -1,0 +1,38 @@
+#!/sbin/openrc-run
+# Copyright 1999-2004 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: /var/cvsroot/gentoo-x86/net-misc/dropbear/files/dropbear.init.d,v 1.2 2004/07/14 23:57:35 agriffis Exp $
+
+RUNTIME_DIR="/var/pi/bot"
+PID_FILE="/var/run/telegram-bot.pid"
+LOG_FILE="/var/log/telegram-bot.log"
+
+depend() {
+	need net
+}
+
+start_pre() {
+	cd $RUNTIME_DIR
+	if [[ ! -e venv/ ]]; then
+		python3 -m venv venv
+		source venv/bin/activate
+		pip3 install -r requirements.txt
+	fi
+}
+
+start() {
+	ebegin "Starting Telegram bot"
+	cd $RUNTIME_DIR
+	source venv/bin/activate
+	python3 main.py > $LOG_FILE &
+	echo $! > $PID_FILE
+	eend $?
+}
+
+stop() {
+	ebegin "Stopping Telegram bot"
+	read pid < $PID_FILE
+	kill $pid || true
+	rm $PID_FILE
+	eend $?
+}

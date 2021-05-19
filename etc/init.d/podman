@@ -1,0 +1,28 @@
+#!/sbin/openrc-run
+
+RUNTIME_DIR="/var/run/podman"
+SOCKET_PATH="podman.sock"
+PID_FILE="/var/run/podman.pid"
+LOG_FILE="/var/log/podman.log"
+depend() {
+	need sysfs cgroups net
+	after iptables ip6tables
+}
+
+start_pre() {
+        mkdir -p "$RUNTIME_DIR"
+}
+
+start() {
+	ebegin "Starting Podman RESTful API"
+	/usr/bin/podman system service --time 0 unix:///$RUNTIME_DIR/$SOCKET_PATH > $LOG_FILE 2>&1 &
+	echo $! > $PID_FILE
+}
+
+stop() {
+        ebegin "Stopping Podman RESTful API"
+	read pid < $PID_FILE
+        kill $pid
+	[ -e $PID_FILE ] && rm $PID_FILE
+	[ -e $RUNTIME_DIR ] && rm -r $RUNTIME_DIR
+}

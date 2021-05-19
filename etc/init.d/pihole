@@ -1,0 +1,40 @@
+#!/sbin/openrc-run
+
+BIN="/usr/bin/podman"
+LOG_FILE="/var/log/pihole.log"
+URL="docker.io/pihole/pihole:latest"
+NAME="Pi-hole"
+PORT="-p 0.0.0.0:53:53 -p 0.0.0.0:53:53/udp -p 0.0.0.0:67:67/udp -p 0.0.0.0:2002:80"
+VOLUME="-v /data/pihole:/etc/pihole -v /data/pihole/dnsmasq.d:/etc/dnsmasq.d"
+EXTRA_ARGS="-e TZ=Asia/Jakarta -e ServerIP=192.168.0.101 --cap-add NET_ADMIN"
+HOST_VOLUME="/data/pihole/dnsmasq.d"
+
+depend() {
+        need cgroups net
+}
+
+start_pre() {
+        mkdir -p $HOST_VOLUME
+}
+
+start() {
+        ebegin "Starting Pi-hole"
+        $BIN stop "$NAME" >/dev/null 2>&1 || true
+	$BIN rm "$NAME" >/dev/null 2>&1 || true
+        $BIN run \
+	        --rm \
+	        --name "$NAME" \
+	        --hostname "$(hostname)-$NAME" \
+	        --pull always \
+	        $PORT \
+                $VOLUME \
+		$EXTRA_ARGS \
+		$URL > $LOG_FILE 2>&1 &
+	eend $?
+}
+
+stop() {
+        ebegin "Stopping Pi-hole"
+        $BIN stop "$NAME" >/dev/null 2>&1 || true
+        $BIN rm "$NAME" >/dev/null 2>&1 || true
+}

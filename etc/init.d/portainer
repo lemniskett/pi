@@ -1,0 +1,41 @@
+#!/sbin/openrc-run
+
+BIN="/usr/bin/podman"
+LOG_FILE="/var/log/portainer.log"
+URL="docker.io/portainer/portainer-ce:alpine"
+NAME="Portainer"
+PORT="-p 0.0.0.0:2001:9000/tcp"
+VOLUME="-v /var/run/podman/podman.sock:/var/run/docker.sock -v /data/portainer:/data"
+EXTRA_ARGS=""
+HOST_VOLUME="/data/portainer"
+
+depend() {
+	after podman
+        need cgroups net
+}
+
+start_pre() {
+        mkdir -p $HOST_VOLUME
+}
+
+start() {
+        ebegin "Starting Portainer"
+        $BIN stop "$NAME" >/dev/null 2>&1 || true
+	$BIN rm "$NAME" >/dev/null 2>&1 || true
+        $BIN run \
+	        --rm \
+	        --name "$NAME" \
+	        --hostname "$(hostname)-$NAME" \
+	        --pull always \
+	        $PORT \
+                $VOLUME \
+		$EXTRA_AGRS \
+		$URL > $LOG_FILE 2>&1 &
+	eend $?
+}
+
+stop() {
+        ebegin "Stopping Portainer"
+        $BIN stop "$NAME" >/dev/null 2>&1 || true
+        $BIN rm "$NAME" >/dev/null 2>&1 || true
+}
